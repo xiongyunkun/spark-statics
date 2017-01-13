@@ -170,9 +170,8 @@ object Retention extends Serializable with StaticsTrait{
    */
   def loadLoginInfoFromDB(platformID:String, date:String) = {
     val tblLogin = platformID + "_log.tblLoginLog_" + date.replace("-", "")
-    val startTime = "Time >= '" + date + " 00:00:00'"
-    val endTime = "Time <= '" + date + " 23:59:59'"
-    val options = Array(startTime, endTime)
+    val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
+    val options = Array(timeOption)
     val loginRes = DBManager.query(tblLogin, options)
     val loginUids = loginRes.rdd.map(row =>{
       val uid = row.getLong(2)
@@ -212,9 +211,8 @@ object Retention extends Serializable with StaticsTrait{
    */
   def loadRegInfoFromDB(platformID:String, date:String) = {
     val tblReg = platformID + "_log.tblAddPlayerLog_" + date.replace("-", "")
-    val startTime = "Time >= '" + date + " 00:00:00'"
-    val endTime = "Time <= '" + date + " 23:59:59'"
-    val options = Array(startTime, endTime)
+    val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
+    val options = Array(timeOption)
     val regRes = DBManager.query(tblReg, options)
     val regUids = regRes.rdd.map(row => {
       val uid = row.getLong(2)
@@ -252,9 +250,8 @@ object Retention extends Serializable with StaticsTrait{
    */
   def loadFirstPayUidFromDB(platformID:String, date:String) = {
     val tblUserPayStatics = platformID + "_statics.tblUserPayStatics"
-    val startTime = "FirstCashTime >= '" + date + " 00:00:00'"
-    val endTime = "FirstCashTime <= '" + date + " 23:59:59'"
-    val options = Array(startTime, endTime)
+    val timeOption = "FirstCashTime >= '" + date + " 00:00:00' and FirstCashTime <= '" + date + " 23:59:59'"
+    val options = Array(timeOption)
     val payRes = DBManager.query(tblUserPayStatics, options)
     val payUids = payRes.rdd.map(row => {
       val hostID = row.getInt(3)

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.yuhe.mgame</groupId>
 	<artifactId>spark-statics</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<profiles>
 		<profile>
 			<id>scala-2.11</id>

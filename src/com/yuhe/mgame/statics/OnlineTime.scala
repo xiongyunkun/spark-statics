@@ -1,17 +1,15 @@
 package com.yuhe.mgame.statics
 
-import org.apache.spark._
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.OnlineTimeDB
 import scala.util.control._
 
-
 /**
  * 统计新老玩家在线时长情况
  */
 object OnlineTime extends Serializable with StaticsTrait {
-  def statics(sc: SparkContext, platformID: String) = {
+  def statics(platformID: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val logoutRes = loadLogoutInfoFromDB(platformID, today)
     logoutRes.cache() //下面有2个action操作，要缓存一下

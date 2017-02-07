@@ -1,6 +1,5 @@
 package com.yuhe.mgame.statics
 
-import org.apache.spark._
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import org.apache.spark.rdd.RDD
@@ -11,7 +10,7 @@ import com.yuhe.mgame.db.HistoryOnlineDB
  */
 object HistoryOnline extends Serializable with StaticsTrait{
   
-   def statics(sc:SparkContext, platformID:String) = {
+   def statics(platformID:String) = {
      val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
      val onlineNums = loadOnlineInfoFromDB(platformID, today)
      staticsNums(platformID, onlineNums, today)

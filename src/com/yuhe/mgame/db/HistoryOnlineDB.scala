@@ -8,7 +8,7 @@ object HistoryOnlineDB {
     var sql = "insert into " + platformID + "_statics.tblHistoryOnline(PlatformID, HostID, Date, MaxOnline, AveOnline, MinOnline) values('"
     sql += platformID + "','" + hostID + "','" + date + "','" + maxNum + "','" + aveNum + "','" + minNum + "') on duplicate key update MaxOnline = '"
     sql += maxNum + "', AveOnline = '" + aveNum + "', MinOnline = '" + minNum + "'"
-    println(sql)
+//    println(sql)
     DBManager.insert(sql)
   }
 }

@@ -9,7 +9,7 @@ object MoneyDB {
 		sql += channel + "','" + staticsType + "','" + value 
 		sql += "','" + uidStr + "','" + consumeNum + "') on duplicate key update Value = '" + value 
 		sql += "', Uids = '" + uidStr + "', ConsumeNum = '" + consumeNum + "'"
-		println(sql)
+//		println(sql)
 		DBManager.insert(sql)
   }
 }

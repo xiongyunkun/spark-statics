@@ -1,13 +1,12 @@
 package com.yuhe.mgame.statics
 
-import org.apache.spark._
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.MoneyDB
 import collection.mutable.Map
 
 object Money extends Serializable with StaticsTrait {
-  def statics(sc: SparkContext, platformID: String) = {
+  def statics(platformID: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val moneyInfos = loadMoneyInfoFromDB(platformID, today)
     for ((hostID, rowList) <- moneyInfos) {

@@ -1,6 +1,5 @@
 package com.yuhe.mgame.statics
 
-import org.apache.spark._
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.GoldDB
@@ -10,7 +9,7 @@ import com.yuhe.mgame.db.GoldDB
  */
 object Gold extends Serializable with StaticsTrait {
 
-  def statics(sc: SparkContext, platformID: String) = {
+  def statics(platformID: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val goldMap = loadGoldInfoFromDB(platformID, today)
     for ((hostID, goldArray) <- goldMap) {

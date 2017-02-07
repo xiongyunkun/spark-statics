@@ -2,7 +2,6 @@ package com.yuhe.mgame.statics
 
 import collection.mutable.ArrayBuffer
 import org.apache.commons.lang.time.DateFormatUtils
-import org.apache.spark._
 import org.apache.spark.rdd.RDD
 import java.lang.Math
 import com.yuhe.mgame.db.DBManager
@@ -13,16 +12,16 @@ import scala.collection.mutable.Map
  * 统计登陆留存率，设备留存率，付费留存率
  */
 object Retention extends Serializable with StaticsTrait{
-  def statics(sc:SparkContext, platformID:String) = {
+  def statics(platformID:String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val (loginUids, loginIMEIs, hostIDs) = loadLoginInfoFromDB(platformID, today)
-    staticsLoginRetention(sc, platformID, today, loginUids, loginIMEIs, hostIDs)
-    staticsPayUserRetention(sc, platformID, today, loginUids, hostIDs)
+    staticsLoginRetention(platformID, today, loginUids, loginIMEIs, hostIDs)
+    staticsPayUserRetention(platformID, today, loginUids, hostIDs)
   }
   /**
    * 统计登陆留存
    */
-  def staticsLoginRetention(sc:SparkContext, platformID:String, today:String, loginUids: RDD[(Long, Int)],
+  def staticsLoginRetention(platformID:String, today:String, loginUids: RDD[(Long, Int)],
         loginIMEIs: RDD[(String, Int)], hostIDs: RDD[Int]) = {
     val (todayRegUids, todayRegIMEIs) = loadRegInfoFromDB(platformID, today)
     val day1 = DateUtils2.getOverDate(today, -1)
@@ -108,7 +107,7 @@ object Retention extends Serializable with StaticsTrait{
   /**
    * 统计付费留存
    */
-  def staticsPayUserRetention(sc:SparkContext, platformID:String, today:String, loginUids: RDD[(Long, Int)],
+  def staticsPayUserRetention(platformID:String, today:String, loginUids: RDD[(Long, Int)],
       hostIDs: RDD[Int]) = {
     val todayPayUids = loadFirstPayUidFromDB(platformID, today)
     val day1 = DateUtils2.getOverDate(today, -1)

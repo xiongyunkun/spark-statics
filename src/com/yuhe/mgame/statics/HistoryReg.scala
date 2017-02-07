@@ -1,6 +1,5 @@
 package com.yuhe.mgame.statics
 
-import org.apache.spark._
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.HistroyRegDB
@@ -10,7 +9,7 @@ import com.yuhe.mgame.utils.DateUtils2
  * 统计历史注册情况
  */
 object HistoryReg extends Serializable with StaticsTrait {
-  def statics(sc: SparkContext, platformID: String) = {
+  def statics(platformID: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val hostUidMap = loadRegInfoFromDB(platformID, today)
     val yesterday = DateUtils2.getOverDate(today, -1)

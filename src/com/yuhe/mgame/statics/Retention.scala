@@ -172,28 +172,28 @@ object Retention extends Serializable with StaticsTrait{
     val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
     val options = Array(timeOption)
     val loginRes = DBManager.query(tblLogin, options)
-    val loginUids = loginRes.rdd.map(row =>{
-      val uid = row.getLong(2)
-      val hostID = row.getInt(1)
+    val loginUids = loginRes.select("HostID", "Uid").rdd.map(row =>{
+      val uid = row.getLong(1)
+      val hostID = row.getInt(0)
       (uid, hostID)
     })
-    val loginIMEIs = loginRes.rdd.map(row =>{
-      val phoneInfo = row.getString(9)
+    val loginIMEIs = loginRes.select("HostID", "PhoneInfo").rdd.map(row =>{
+      val phoneInfo = row.getString(1)
       val imei = getIMEI(phoneInfo)
-      val hostID = row.getInt(1)
+      val hostID = row.getInt(0)
       (imei, hostID)
     })
     //还要再合并退出日志中的uid和imei\
     val tblLogout = platformID + "_log.tblLogoutLog_" + date.replace("-", "")
     val logoutRes = DBManager.query(tblLogout, options)
-    val logoutUids = logoutRes.rdd.map(row => {
-      val uid = row.getLong(2)
-      val hostID = row.getInt(1)
+    val logoutUids = logoutRes.select("HostID", "Uid").rdd.map(row => {
+      val uid = row.getLong(1)
+      val hostID = row.getInt(0)
       (uid, hostID)
     })
-    val logoutIMEIs = logoutRes.rdd.map(row => {
-      val hostID = row.getInt(1)
-      val phoneInfo = row.getString(16)
+    val logoutIMEIs = logoutRes.select("HostID", "PhoneInfo").rdd.map(row => {
+      val hostID = row.getInt(0)
+      val phoneInfo = row.getString(1)
       val imei = getIMEI(phoneInfo)
       (imei, hostID)
     })
@@ -252,9 +252,9 @@ object Retention extends Serializable with StaticsTrait{
     val timeOption = "FirstCashTime >= '" + date + " 00:00:00' and FirstCashTime <= '" + date + " 23:59:59'"
     val options = Array(timeOption)
     val payRes = DBManager.query(tblUserPayStatics, options)
-    val payUids = payRes.rdd.map(row => {
-      val hostID = row.getInt(3)
-      val uid = row.getLong(0)
+    val payUids = payRes.select("HostID", "Uid").rdd.map(row => {
+      val hostID = row.getInt(0)
+      val uid = row.getLong(1)
       (uid, hostID)
     })
     payUids

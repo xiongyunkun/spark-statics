@@ -4,6 +4,8 @@ import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.HistroyRegDB
 import com.yuhe.mgame.utils.DateUtils2
+import collection.mutable.Map
+import collection.mutable.ArrayBuffer
 
 /**
  * 统计历史注册情况
@@ -30,11 +32,11 @@ object HistoryReg extends Serializable with StaticsTrait {
     val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
     val options = Array(timeOption)
     val regRes = DBManager.query(tblReg, options)
-    regRes.rdd.map(row => {
-      val hostID = row.getInt(1)
-      val uid = row.getLong(2)
+    regRes.select("HostID", "Uid").rdd.map(row => {
+      val hostID = row.getInt(0)
+      val uid = row.getLong(1)
       (hostID, uid)
-    }).groupByKey().collectAsMap()
+    }).groupByKey.collectAsMap
   }
   
   /**
@@ -45,10 +47,10 @@ object HistoryReg extends Serializable with StaticsTrait {
     val timeOption = "Date = '" + date + "'"
     val options = Array(timeOption)
     val regRes = DBManager.query(tblName, options)
-    regRes.rdd.map(row =>{
-      val hostID = row.getInt(1)
-      val totalRegNum = row.getInt(5)
+    regRes.select("HostID", "TotalRegNum").rdd.map(row => {
+      val hostID = row.getInt(0)
+      val totalRegNum = row.getInt(1)
       (hostID, totalRegNum)
-    }).collectAsMap()
+    }).reduceByKey((x, y) => x).collectAsMap
   }
 }

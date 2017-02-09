@@ -14,15 +14,15 @@ object OnlineTime extends Serializable with StaticsTrait {
     val logoutRes = loadLogoutInfoFromDB(platformID, today)
     logoutRes.cache() //下面有2个action操作，要缓存一下
     //先计算出uid和hostID的对应关系
-    val hostUidMap = logoutRes.rdd.map(row => {
-      val uid = row.getLong(2)
-      val hostID = row.getInt(1)
+    val hostUidMap = logoutRes.select("HostID", "Uid").rdd.map(row => {
+      val uid = row.getLong(1)
+      val hostID = row.getInt(0)
       (uid, hostID)
     }).reduceByKey((x, y)=> x).map(x => (x._2, x._1)).groupByKey().collectAsMap()
     //再计算出每个uid今天的在线总时长
-    val uidOnTimeMap = logoutRes.rdd.map(row => {
-      val uid = row.getLong(2)
-      val ontime = row.getInt(4)
+    val uidOnTimeMap = logoutRes.select("Uid", "OnTime").rdd.map(row => {
+      val uid = row.getLong(0)
+      val ontime = row.getInt(1)
       (uid, ontime)
     }).reduceByKey((x, y) => x + y).collectAsMap()
     val newUidMap = loadRegInfoFromDB(platformID, today)
@@ -73,9 +73,9 @@ object OnlineTime extends Serializable with StaticsTrait {
     val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
     val options = Array(timeOption)
     val regRes = DBManager.query(tblReg, options)
-    regRes.rdd.map(row => {
-      val uid = row.getLong(2)
-      val hostID = row.getInt(1)
+    regRes.select("HostID", "Uid").rdd.map(row => {
+      val uid = row.getLong(1)
+      val hostID = row.getInt(0)
       (uid, hostID)
     }).collectAsMap()
   }

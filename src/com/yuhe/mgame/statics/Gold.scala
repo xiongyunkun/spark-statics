@@ -3,6 +3,7 @@ package com.yuhe.mgame.statics
 import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.GoldDB
+import collection.mutable.ArrayBuffer
 
 /**
  * 统计钻石产出和消费情况
@@ -16,10 +17,10 @@ object Gold extends Serializable with StaticsTrait {
       var resultMap = collection.mutable.Map[String, collection.mutable.Map[Int, Int]]()
       var addUidSet = collection.mutable.Set[Long]() //新增钻石用户列表
       val subUidSet = collection.mutable.Set[Long]() //消费钻石用户列表
-      for (array <- goldArray) {
-        val uid = array(0).toLong
-        val changes = array(1).toInt
-        val reason = array(2)
+      for (tuple <- goldArray) {
+        val uid = tuple._1
+        val changes = tuple._2
+        val reason = tuple._3
         var reasonMap = resultMap.getOrElse(reason, collection.mutable.Map(1 -> 0, 2 -> 0, 3 -> 0, 4 -> 0))
         //1:sub,2:add,3:consumeNumbers,4:addNumbers
         if (changes > 0) {
@@ -54,12 +55,8 @@ object Gold extends Serializable with StaticsTrait {
     val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
     val options = Array(timeOption)
     val goldRes = DBManager.query(tblName, options)
-    goldRes.rdd.map(row => {
-      val hostID = row.getInt(1)
-      val uid = row.getLong(2)
-      val changes = row.getInt(3)
-      val reason = row.getString(4)
-      (hostID, Array(uid.toString, changes.toString, reason))
-    }).groupByKey().collectAsMap()
+    goldRes.select("HostID", "Uid", "Changes", "Reason").rdd.map(row => {
+      (row.getInt(0), (row.getLong(1), row.getInt(2), row.getString(3)))
+    }).groupByKey.collectAsMap
   }
 }

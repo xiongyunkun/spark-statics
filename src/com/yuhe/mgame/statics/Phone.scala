@@ -10,7 +10,7 @@ import collection.mutable.Map
  */
 object Phone extends Serializable with StaticsTrait{
   
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val imeiList = loadLoginIMEIFromDB(platformID, today)
     for((hostID, imeiArray) <- imeiList){

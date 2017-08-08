@@ -10,8 +10,8 @@ import collection.mutable.Map
  * 统计充值区间
  */
 object PayZone extends Serializable with StaticsTrait {
-  def statics(platformID: String) = {
-    val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
+  
+  def statics(platformID: String, today: String) = {
     val goldMap = loadUserPayDayFromDB(platformID, today)
     for ((hostID, goldList) <- goldMap) {
       val results = Map[Int, Int]()

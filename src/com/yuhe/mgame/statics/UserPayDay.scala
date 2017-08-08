@@ -11,8 +11,7 @@ import com.yuhe.mgame.utils.Currency
 
 object UserPayDay extends Serializable with StaticsTrait {
 
-  def statics(platformID: String) = {
-    val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
+  def statics(platformID: String, today: String) = {
     val payMap = loadPayOrderFromDB(platformID, today)
     for ((hostID, payList) <- payMap) {
       //这里因为字段里面有很多属性类型，int,float,string
@@ -41,7 +40,7 @@ object UserPayDay extends Serializable with StaticsTrait {
           resultMap(uid)("TotalNum") = totalNum.toString
           resultMap(uid)("TotalGold") = totalGold.toString
         }
-        frequencyMap(uid) = frequencyMap.getOrElse(uid, 0) + 1
+        frequencyMap(uid) = frequencyMap.getOrElse(uid, 1)
       }
       //记录数据库
       UserPayDayStaticsDB.insert(platformID, resultMap)

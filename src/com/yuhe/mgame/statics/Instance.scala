@@ -18,7 +18,7 @@ object Instance extends Serializable with StaticsTrait {
     230007 -> 4, 230008 -> 4, 240001 -> 5, 240002 -> 5, 240003 -> 5, 240004 -> 5, 240005 -> 5, 240006 -> 5,
     240007 -> 5, 240008 -> 5)
 
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val instLogMap = loadInstanceLogFromDB(platformID, today)
     val regMap = loadRegNumFromDB(platformID, today)

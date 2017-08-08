@@ -11,17 +11,15 @@ import com.yuhe.mgame.db.HistoryOnlineDB
  */
 object HistoryOnline extends Serializable with StaticsTrait{
   
-   def statics(platformID:String) = {
-     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
+   def statics(platformID:String, today: String) = {
      val onlineNums = loadOnlineInfoFromDB(platformID, today)
      val period = getPeriod(today)
-     for((hostID, numList) <- onlineNums){
-       val numArray = numList.toArray
-       val maxOnline = numArray.max
-       val minOnline = numArray.min
-       val sumOnline = numArray.sum
-       val aveOnline = Math.floorDiv(sumOnline, period)
-       //记录数据库
+     val result = onlineNums.mapValues(x => {
+       val array = x.toArray
+       (array.max, array.min, Math.floorDiv(array.sum, period))
+     }).collectAsMap
+     for((hostID, numInfo) <- result){
+       val (maxOnline, minOnline, aveOnline) = numInfo
        HistoryOnlineDB.insert(platformID, hostID, today, maxOnline, minOnline, aveOnline)
      }
    }
@@ -37,7 +35,7 @@ object HistoryOnline extends Serializable with StaticsTrait{
        val hostID = row.getInt(0)
        val onlineNum = row.getInt(1)
        (hostID, onlineNum)
-     }).groupByKey.collectAsMap
+     }).groupByKey
    }
    /**
     * 计算从今天0点开始到现在为止过了多少个5分钟

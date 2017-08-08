@@ -6,5 +6,5 @@ trait StaticsTrait {
   /**
    * 统计指标
    */
-  def statics(platformID:String) 
+  def statics(platformID:String, today:String) 
 }

@@ -7,7 +7,7 @@ import collection.mutable.Map
 
 object Vip extends Serializable with StaticsTrait {
 
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val vipMap = loadVipFromDB(platformID, today)
     for ((hostID, vipArray) <- vipMap) {

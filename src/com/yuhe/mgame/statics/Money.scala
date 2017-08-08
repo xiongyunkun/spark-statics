@@ -6,7 +6,7 @@ import com.yuhe.mgame.db.MoneyDB
 import collection.mutable.Map
 
 object Money extends Serializable with StaticsTrait {
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val moneyInfos = loadMoneyInfoFromDB(platformID, today)
     for ((hostID, rowList) <- moneyInfos) {

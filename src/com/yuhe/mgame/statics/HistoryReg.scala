@@ -11,13 +11,12 @@ import collection.mutable.ArrayBuffer
  * 统计历史注册情况
  */
 object HistoryReg extends Serializable with StaticsTrait {
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val hostUidMap = loadRegInfoFromDB(platformID, today)
     val yesterday = DateUtils2.getOverDate(today, -1)
     val yesterdayRegMap = loadRegStaticsFromDB(platformID, yesterday)
-    for((hostID, uidList) <- hostUidMap){
-      val todayNum = uidList.size //今天的注册人数
+    for((hostID, todayNum) <- hostUidMap){
       val totalNum = todayNum + yesterdayRegMap.getOrElse(hostID, 0) //历史总注册人数
       //插入数据库
       HistroyRegDB.insert(platformID, hostID, today, todayNum, totalNum)
@@ -36,7 +35,7 @@ object HistoryReg extends Serializable with StaticsTrait {
       val hostID = row.getInt(0)
       val uid = row.getLong(1)
       (hostID, uid)
-    }).groupByKey.collectAsMap
+    }).groupByKey.mapValues(x => x.size).collectAsMap
   }
   
   /**

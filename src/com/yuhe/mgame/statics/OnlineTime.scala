@@ -4,12 +4,13 @@ import org.apache.commons.lang.time.DateFormatUtils
 import com.yuhe.mgame.db.DBManager
 import com.yuhe.mgame.db.OnlineTimeDB
 import scala.util.control._
+import scala.collection.mutable.{Map => MutableMap}
 
 /**
  * 统计新老玩家在线时长情况
  */
 object OnlineTime extends Serializable with StaticsTrait {
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val logoutRes = loadLogoutInfoFromDB(platformID, today)
     logoutRes.cache() //下面有2个action操作，要缓存一下
@@ -17,8 +18,8 @@ object OnlineTime extends Serializable with StaticsTrait {
     val hostUidMap = logoutRes.select("HostID", "Uid").rdd.map(row => {
       val uid = row.getLong(1)
       val hostID = row.getInt(0)
-      (uid, hostID)
-    }).reduceByKey((x, y)=> x).map(x => (x._2, x._1)).groupByKey().collectAsMap()
+      (hostID, uid)
+    }).groupByKey().collectAsMap()
     //再计算出每个uid今天的在线总时长
     val uidOnTimeMap = logoutRes.select("Uid", "OnTime").rdd.map(row => {
       val uid = row.getLong(0)
@@ -27,8 +28,8 @@ object OnlineTime extends Serializable with StaticsTrait {
     }).reduceByKey((x, y) => x + y).collectAsMap()
     val newUidMap = loadRegInfoFromDB(platformID, today)
     for((hostID, uidArray) <- hostUidMap){
-      val newUidResults = collection.mutable.Map[String, Int]()
-      val oldUidResults = collection.mutable.Map[String, Int]()
+      val newUidResults = MutableMap[String, Int]()
+      val oldUidResults = MutableMap[String, Int]()
       var newUidNum = 0
       var oldUidNum = 0
       var newTotalTime = 0
@@ -38,11 +39,11 @@ object OnlineTime extends Serializable with StaticsTrait {
         val period = getPeriodID(time)
 //        println(time+","+period)
         if(newUidMap.contains(uid)){
-          newUidResults(period) = newUidResults.getOrElse(period, 0) + 1
+          newUidResults(period) = newUidResults.getOrElse(period, 1)
           newUidNum += 1
           newTotalTime += time
         }else{
-          oldUidResults(period) = oldUidResults.getOrElse(period, 0) + 1
+          oldUidResults(period) = oldUidResults.getOrElse(period, 1)
           oldUidNum += 1
           oldTotalTime += time
         }

@@ -10,7 +10,7 @@ import collection.mutable.ArrayBuffer
  * 玩家等级统计，统计每个等级的玩家人数，活跃人数，流失人数，充值人数，充值流失人数
  */
 object LevelStatics extends Serializable with StaticsTrait{
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val userInfos = loadUserInfoFromDB(platformID, today)
     val loginMap = loadLoginInfoFromDB(platformID, today)

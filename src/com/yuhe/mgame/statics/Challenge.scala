@@ -9,13 +9,12 @@ import collection.mutable.ArrayBuffer
  * 统计极限挑战
  */
 object Challenge extends Serializable with StaticsTrait {
-  
-  def statics(platformID: String) = {
-    val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
+
+  def statics(platformID: String, today: String) = {
     val challengeMap = loadChallengeFromDB(platformID, today)
-    for((hostID, challengeList) <- challengeMap){
+    for ((hostID, challengeList) <- challengeMap) {
       val results = Map[Int, Map[Int, Map[Int, Map[Long, Int]]]]()
-      for(info <- challengeList){
+      for (info <- challengeList) {
         val uid = info._1
         val chapterID = info._2
         val idx = info._3
@@ -29,9 +28,9 @@ object Challenge extends Serializable with StaticsTrait {
         results(chapterID) = cResult
       }
       //记录数据库
-      for((chapterID, cResult) <- results){
-        for((idx, iResult) <- cResult){
-          for((stageID, sResult) <- iResult){
+      for ((chapterID, cResult) <- results) {
+        for ((idx, iResult) <- cResult) {
+          for ((stageID, sResult) <- iResult) {
             val num = sResult.size
             ChallengeDB.insert(platformID, hostID, today, chapterID, idx, stageID, num)
           }
@@ -42,7 +41,7 @@ object Challenge extends Serializable with StaticsTrait {
   /**
    * 从tblChallengeLog表中获得极限挑战的日志数据
    */
-  def loadChallengeFromDB(platformID:String, date:String) = {
+  def loadChallengeFromDB(platformID: String, date: String) = {
     val tblName = platformID + "_log.tblChallengeLog_" + date.replace("-", "")
     val timeOption = "Time >= '" + date + " 00:00:00' and Time <= '" + date + " 23:59:59'"
     val options = Array(timeOption)

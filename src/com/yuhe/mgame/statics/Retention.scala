@@ -12,7 +12,7 @@ import scala.collection.mutable.Map
  * 统计登陆留存率，设备留存率，付费留存率
  */
 object Retention extends Serializable with StaticsTrait{
-  def statics(platformID:String) = {
+  def statics(platformID:String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val (loginUids, loginIMEIs, hostIDs) = loadLoginInfoFromDB(platformID, today)
     staticsLoginRetention(platformID, today, loginUids, loginIMEIs, hostIDs)
@@ -183,7 +183,7 @@ object Retention extends Serializable with StaticsTrait{
       val hostID = row.getInt(0)
       (imei, hostID)
     })
-    //还要再合并退出日志中的uid和imei\
+    //还要再合并退出日志中的uid和imei
     val tblLogout = platformID + "_log.tblLogoutLog_" + date.replace("-", "")
     val logoutRes = DBManager.query(tblLogout, options)
     val logoutUids = logoutRes.select("HostID", "Uid").rdd.map(row => {

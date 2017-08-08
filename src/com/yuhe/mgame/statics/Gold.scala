@@ -10,7 +10,7 @@ import collection.mutable.ArrayBuffer
  */
 object Gold extends Serializable with StaticsTrait {
 
-  def statics(platformID: String) = {
+  def statics(platformID: String, today: String) = {
     val today = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd")
     val goldMap = loadGoldInfoFromDB(platformID, today)
     for ((hostID, goldArray) <- goldMap) {

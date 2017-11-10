@@ -10,8 +10,7 @@ object ServerDB {
    */
   def getStaticsServers() = {
     val serverMap = MutableMap[String, ArrayBuffer[String]]()
-    var sql = "select a.serverid as HostID, c.PlatformID as PlatformID from smcs.srvgroupinfo a, "
-    sql += "smcs.servergroup b, smcs.tblMixServers c where a.groupid = b.id and b.name = '统计专区' and a.serverid = c.HostID"
+    val sql = "select a.HostID, a.PlatformID from smcs.tblMixServer a, smcs.tblServer b where a.HostID = b.HostID and b.IsStatics = '1'"
     val conn = DBManager.getConnection
     try{
       val smst = conn.createStatement
@@ -38,8 +37,7 @@ object ServerDB {
    */
   def getStaticsPlatformSet() = {
     val platformSet = Set[String]()
-    var sql = "select a.serverid as HostID, c.PlatformID as PlatformID from smcs.srvgroupinfo a, "
-    sql += "smcs.servergroup b, smcs.tblMixServers c where a.groupid = b.id and b.name = '统计专区' and a.serverid = c.HostID"
+    val sql = "select a.HostID, a.PlatformID from smcs.tblMixServer a, smcs.tblServer b where a.HostID = b.HostID and b.IsStatics = '1'"
     val conn = DBManager.getConnection
     try{
       val smst = conn.createStatement

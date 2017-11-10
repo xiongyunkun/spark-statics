@@ -1,12 +1,12 @@
 package com.yuhe.mgame.db
 
-import org.apache.spark._
-import org.apache.spark.sql.{ Row, SQLContext }
+import java.io.InputStream
+import java.sql.{Connection, ResultSet, Statement}
 import java.util.Properties
-import java.io.{ InputStream, FileInputStream, File }
-import org.apache.spark.sql.DataFrame
-import java.sql.{ DriverManager, PreparedStatement, Connection, Statement, ResultSet }
+
 import com.mchange.v2.c3p0.ComboPooledDataSource
+import org.apache.spark._
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object DBManager {
   //先初始化连接池
@@ -29,14 +29,14 @@ object DBManager {
     case ex: Exception => ex.printStackTrace()
   }
   //再初始化spark sql的配置
-  private var sqlContext: SQLContext = null
+  private var sparkSession:SparkSession = null
   private val url = prop.getProperty("url").toString()
   private val sparkProp = new Properties()
   sparkProp.setProperty("user", prop.getProperty("username").toString())
   sparkProp.setProperty("password", prop.getProperty("password").toString())
 
   def init(sc: SparkContext) = {
-    sqlContext = new SQLContext(sc)
+    sparkSession = SparkSession.builder.config(sc.getConf).getOrCreate()
   }
   /**
    * 查询数据库，返回DataSet结构
@@ -47,7 +47,7 @@ object DBManager {
       newOptions = Array[String]("1=1") //如果条件判断为0则用1=1判断    
     else
       newOptions = options
-    sqlContext.read.jdbc(url, tblName, newOptions, sparkProp)
+    sparkSession.read.jdbc(url, tblName, newOptions, sparkProp)
   }
   /**
    * 通过sql语句查询数据

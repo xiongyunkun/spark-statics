@@ -3,7 +3,7 @@ package com.yuhe.mgame
 import org.apache.spark._
 import com.yuhe.mgame.statics.StaticsFactory
 import com.yuhe.mgame.db.DBManager
-import org.apache.log4j.{ Level, Logger }
+import org.apache.log4j.{Level, Logger}
 
 object Statics {
   def main(args: Array[String]) {
